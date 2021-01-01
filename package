@@ -45,7 +45,7 @@ function package_install() {
             sudo yum install -y $packages;
             ;;
         apt)
-            sudo apt install $packages;
+            sudo apt install -y $packages;
             ;;
         brew)
             brew install $packages;

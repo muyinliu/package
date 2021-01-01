@@ -452,6 +452,10 @@ function package_rdepends() {
     esac
 }
 
+function package_backend() {
+    echo "$package_manager";
+}
+
 function package_help() {
     echo "Usage: package <command>";
     echo "";
@@ -478,6 +482,7 @@ function package_help() {
     echo "  depends <package>                 show dependencies of package";
     echo "  rdepends <package>                show packages depend on package";
     echo "                                      (reverse dependencies)";
+    echo "  backend                           show backend package manager";
     echo "  help                              show this help doc";
     echo "";
     echo "IMPORTANT NOTE: Only support following backend package managers: dnf, yum, apt, brew(for macOS), opkg(Entware) and apk(for Alpine Linux)";
@@ -525,6 +530,9 @@ case "$1" in
         ;;
     rdepends)
         package_rdepends "$2";
+        ;;
+    backend)
+        package_backend;
         ;;
     help)
         package_help;

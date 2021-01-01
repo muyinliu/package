@@ -74,7 +74,7 @@ function package_uninstall() {
             sudo yum remove -y $packages;
             ;;
         apt)
-            sudo apt remove $packages;
+            sudo apt remove -y $packages;
             ;;
         brew)
             brew uninstall $packages;

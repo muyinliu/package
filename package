@@ -140,15 +140,6 @@ function package_purge() {
         apt)
             apt purge "$2";
             ;;
-        brew)
-            echo "command purge NOT support for package manager $package_manager";
-            ;;
-        opkg)
-            echo "command purge NOT support for package manager $package_manager";
-            ;;
-        apk)
-            echo "command purge NOT support for package manager $package_manager";
-            ;;
         *)
             echo "command purge NOT support for package manager $package_manager";
             ;;
@@ -224,9 +215,6 @@ function package_cleanup() {
             ;;
         brew)
             brew cleanup;
-            ;;
-        opkg)
-            echo "command cleanup NOT support for package manager $package_manager";
             ;;
         apk)
             apk cache clean;
@@ -389,14 +377,8 @@ function package_provides() {
             echo "Might take a long time..."
             apt-file search "$2";
             ;;
-        brew)
-            echo "command provides NOT support for package manager $package_manager";
-            ;;
         opkg)
             opkg search "*$2*";
-            ;;
-        apk)
-            echo "command provides NOT support for package manager $package_manager";
             ;;
         *)
             echo "command provides NOT support for package manager $package_manager";

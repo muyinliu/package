@@ -38,22 +38,22 @@ function package_install() {
     # install package xxx
     case "$package_manager" in
         dnf)
-            sudo dnf install -y "$2";
+            sudo dnf install -y "$1";
             ;;
         yum)
-            sudo yum install -y "$2";
+            sudo yum install -y "$1";
             ;;
         apt)
-            sudo apt install "$2";
+            sudo apt install "$1";
             ;;
         brew)
-            brew install "$2";
+            brew install "$1";
             ;;
         opkg)
-            opkg install "$2";
+            opkg install "$1";
             ;;
         apk)
-            apk add --update "$2";
+            apk add --update "$1";
             ;;
         *)
             echo "command install NOT support for package manager $package_manager";
@@ -66,22 +66,22 @@ function package_uninstall() {
     # remove package xxx
     case "$package_manager" in
         dnf)
-            sudo dnf remove -y "$2";
+            sudo dnf remove -y "$1";
             ;;
         yum)
-            sudo yum remove -y "$2";
+            sudo yum remove -y "$1";
             ;;
         apt)
-            sudo apt remove "$2";
+            sudo apt remove "$1";
             ;;
         brew)
-            brew uninstall "$2";
+            brew uninstall "$1";
             ;;
         opkg)
-            opkg remove "$2";
+            opkg remove "$1";
             ;;
         apk)
-            apk del "$2";
+            apk del "$1";
             ;;
         *)
             echo "command uninstall NOT support for package manager $package_manager";
@@ -94,22 +94,22 @@ function package_reinstall() {
     # remove package xxx
     case "$package_manager" in
         dnf)
-            sudo dnf reinstall -y "$2";
+            sudo dnf reinstall -y "$1";
             ;;
         yum)
-            sudo yum reinstall -y "$2";
+            sudo yum reinstall -y "$1";
             ;;
         apt)
-            sudo apt install --reinstall -y "$2";
+            sudo apt install --reinstall -y "$1";
             ;;
         brew)
-            brew reinstall "$2";
+            brew reinstall "$1";
             ;;
         opkg)
-            opkg install --force-reinstall "$2";
+            opkg install --force-reinstall "$1";
             ;;
         apk)
-            apk add --update --force-overwrite "$2";
+            apk add --update --force-overwrite "$1";
             ;;
         *)
             echo "command reinstall NOT support for package manager $package_manager";
@@ -138,7 +138,7 @@ function package_purge() {
 	        done
             ;;
         apt)
-            apt purge "$2";
+            apt purge "$1";
             ;;
         *)
             echo "command purge NOT support for package manager $package_manager";
@@ -178,22 +178,22 @@ function package_upgrade() {
     # upgrade package xxx
     case "$package_manager" in
         dnf)
-            sudo dnf upgrade -y "$2";
+            sudo dnf upgrade -y "$1";
             ;;
         yum)
-            sudo yum upgrade -y "$2";
+            sudo yum upgrade -y "$1";
             ;;
         apt)
-            sudo apt upgrade "$2";
+            sudo apt upgrade "$1";
             ;;
         brew)
-            brew upgrade "$2";
+            brew upgrade "$1";
             ;;
         opkg)
-            opkg upgrade "$2";
+            opkg upgrade "$1";
             ;;
         apk)
-            apk add --update --upgrade "$2";
+            apk add --update --upgrade "$1";
             ;;
         *)
             echo "command upgrade NOT support for package manager $package_manager";
@@ -283,22 +283,22 @@ function package_search() {
     # search package xxx
     case "$package_manager" in
         dnf)
-            dnf search "$2";
+            dnf search "$1";
             ;;
         yum)
-            yum search "$2";
+            yum search "$1";
             ;;
         apt)
-            apt search "$2";
+            apt search "$1";
             ;;
         brew)
-            brew search "$2";
+            brew search "$1";
             ;;
         opkg)
-            opkg find "*${2}*";
+            opkg find "*${1}*";
             ;;
         apk)
-            apk search "$2";
+            apk search "$1";
             ;;
         *)
             echo "command search NOT support for package manager $package_manager";
@@ -310,22 +310,22 @@ function package_info() {
     # show info of package xxx
     case "$package_manager" in
         dnf)
-            dnf info "$2";
+            dnf info "$1";
             ;;
         yum)
-            yum info "$2";
+            yum info "$1";
             ;;
         apt)
-            apt show "$2";
+            apt show "$1";
             ;;
         brew)
-            brew info "$2";
+            brew info "$1";
             ;;
         opkg)
-            opkg info "$2";
+            opkg info "$1";
             ;;
         apk)
-            apk info "$2";
+            apk info "$1";
             ;;
         *)
             echo "command info NOT support for package manager $package_manager";
@@ -339,23 +339,23 @@ function package_files() {
     case "$package_manager" in
         dnf|yum)
             ensure_yum_utils;
-            repoquery --list "$2";
+            repoquery --list "$1";
             ;;
         apt)
             ensure_apt_file;
             echo "Might take a long time..."
-            apt-file list "$2"; # support NOT installed packages, very slow
+            apt-file list "$1"; # support NOT installed packages, very slow
             # dpkg -L xxx # only support installed packages, very fast
             ;;
         brew)
-            brew ls --verbose "$2";
+            brew ls --verbose "$1";
             ;;
         opkg)
-            opkg files "$2";
+            opkg files "$1";
             ;;
         apk)
             # TODO require install package first
-            apk info -L "$2";
+            apk info -L "$1";
             ;;
         *)
             echo "command files NOT support for package manager $package_manager";
@@ -367,18 +367,18 @@ function package_provides() {
     # find package providing the file
     case "$package_manager" in
         dnf)
-            dnf provides "$2";
+            dnf provides "$1";
             ;;
         yum)
-            yum provides "$2";
+            yum provides "$1";
             ;;
         apt)
             ensure_apt_file;
             echo "Might take a long time..."
-            apt-file search "$2";
+            apt-file search "$1";
             ;;
         opkg)
-            opkg search "*$2*";
+            opkg search "*$1*";
             ;;
         *)
             echo "command provides NOT support for package manager $package_manager";
@@ -391,19 +391,19 @@ function package_depends() {
     case "$package_manager" in
         dnf|yum)
             ensure_yum_utils;
-            repoquery --requires --resolve "$2";
+            repoquery --requires --resolve "$1";
             ;;
         apt)
-            apt depends "$2";
+            apt depends "$1";
             ;;
         brew)
-            brew deps "$2";
+            brew deps "$1";
             ;;
         opkg)
-            opkg depends "$2";
+            opkg depends "$1";
             ;;
         apk)
-            apk info --depends "$2";
+            apk info --depends "$1";
             ;;
         *)
             echo "command depends NOT support for package manager $package_manager";
@@ -416,19 +416,19 @@ function package_rdepends() {
     case "$package_manager" in
         dnf|yum)
             ensure_yum_utils;
-            repoquery --query --whatrequires "$2";
+            repoquery --query --whatrequires "$1";
             ;;
         apt)
-            apt rdepends "$2";
+            apt rdepends "$1";
             ;;
         brew)
-            brew uses "$2";
+            brew uses "$1";
             ;;
         opkg)
-            opkg whatdepends "$2";
+            opkg whatdepends "$1";
             ;;
         apk)
-            apk info --rdepends "$2";
+            apk info --rdepends "$1";
             ;;
         *)
             echo "command depends NOT support for package manager $package_manager";

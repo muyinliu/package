@@ -398,7 +398,7 @@ function package_rdepends() {
             brew uses "$2";
             ;;
         opkg)
-            sudo opkg depends "$2";
+            opkg whatdepends "$2";
             ;;
         *)
             echo "command depends NOT support for package manager $package_manager";

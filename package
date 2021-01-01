@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ "$(command -v dnf)" ]; then
+if [ "$(command -v brew)" ]; then
+    package_manager="brew"
+elif [ "$(command -v dnf)" ]; then
     package_manager="dnf"
 elif [ "$(command -v yum)" ]; then
     package_manager="yum"
 elif [ "$(command -v apt)" ]; then
     package_manager="apt"
-elif [ "$(command -v brew)" ]; then
-    package_manager="brew"
 elif [ "$(command -v opkg)" ]; then
     package_manager="opkg"
 else

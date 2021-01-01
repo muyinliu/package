@@ -13,7 +13,7 @@ elif [ "$(command -v opkg)" ]; then
 elif [ "$(command -v apk)" ]; then
     package_manager="apk"
 else
-    echo "Only support following package managers: dnf, yum, apt, brew, opkg(Entware) and apk(for Alpine Linux)";
+    echo "Only support following backend package managers: dnf, yum, apt, brew, opkg(Entware) and apk(for Alpine Linux)";
     exit 1;
 fi;
 
@@ -461,6 +461,8 @@ function package_help() {
     echo "  depends <package>      show dependencies of package";
     echo "  rdepends <package>     show packages depend on package(reverse dependencies)";
     echo "  help                   show this help doc";
+    echo "";
+    echo "IMPORTANT NOTE: Only support following backend package managers: dnf, yum, apt, brew(for macOS), opkg(Entware) and apk(for Alpine Linux)";
 }
 
 case "$1" in

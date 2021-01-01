@@ -217,7 +217,7 @@ function package_cleanup() {
             sudo yum autoremove;
             ;;
         apt)
-            sudo apt autoremove;
+            sudo apt autoremove -y;
             ;;
         brew)
             brew cleanup;

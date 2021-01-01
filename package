@@ -290,7 +290,7 @@ function package_info() {
     # show info of package xxx
     case "$package_manager" in
         dnf)
-            dnf show "$2";
+            dnf info "$2";
             ;;
         yum)
             yum info "$2";

@@ -1,0 +1,485 @@
+#!/bin/bash
+
+if [ "$(command -v dnf)" ]; then
+    package_manager="dnf"
+elif [ "$(command -v yum)" ]; then
+    package_manager="yum"
+elif [ "$(command -v apt)" ]; then
+    package_manager="apt"
+elif [ "$(command -v brew)" ]; then
+    package_manager="brew"
+elif [ "$(command -v opkg)" ]; then
+    package_manager="opkg"
+else
+    echo "Only support following package managers: dnf, yum, apt, brew and opkg(Entware)";
+    exit 1;
+fi;
+
+function ensure_yum_utils() {
+    if [ ! "$(command -v repoquery)" ]; then
+        if command -v dnf; then
+            sudo dnf install -y yum-utils
+        elif command -v yum; then
+            sudo yum install -y yum-utils
+        fi;
+    fi;
+}
+
+function ensure_apt_file() {
+    if [ ! "$(command -v apt-file)" ]; then
+        sudo apt install -y apt-file;
+    fi;
+}
+
+# TODO support install multiple packages at once
+function package_install() {
+    # install package xxx
+    case "$package_manager" in
+        dnf)
+            sudo dnf install -y "$2";
+            ;;
+        yum)
+            sudo yum install -y "$2";
+            ;;
+        apt)
+            sudo apt install "$2";
+            ;;
+        brew)
+            brew install "$2";
+            ;;
+        opkg)
+            opkg install "$2";
+            ;;
+        *)
+            echo "command install NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+# TODO support uninstall multiple packages at once
+function package_uninstall() {
+    # remove package xxx
+    case "$package_manager" in
+        dnf)
+            sudo dnf remove -y "$2";
+            ;;
+        yum)
+            sudo yum remove -y "$2";
+            ;;
+        apt)
+            sudo apt remove "$2";
+            ;;
+        brew)
+            brew uninstall "$2";
+            ;;
+        opkg)
+            opkg remove "$2";
+            ;;
+        *)
+            echo "command uninstall NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+# TODO support reinstall multiple packages at once
+function package_reinstall() {
+    # remove package xxx
+    case "$package_manager" in
+        dnf)
+            sudo dnf reinstall -y "$2";
+            ;;
+        yum)
+            sudo yum reinstall -y "$2";
+            ;;
+        apt)
+            sudo apt install --reinstall -y "$2";
+            ;;
+        brew)
+            brew reinstall "$2";
+            ;;
+        opkg)
+            opkg install --force-reinstall "$2";
+            ;;
+        *)
+            echo "command uninstall NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_purge() {
+    # remove package xxx with config files
+    case "$package_manager" in
+        dnf|yum) # TODO should check
+            shift;
+	        for package in "$@"
+            do
+                if rpm -q "$package" > /dev/null ; then
+                    echo "removing config files for $package"
+                    for file in $(rpm -q --configfiles "$package")
+                    do
+                        echo "  removing $file"
+                        # rm -f $file
+                    done
+                    rpm -e "$package"
+                else
+                    echo "package $package is not installed"
+                fi
+	        done
+            ;;
+        apt)
+            apt purge "$2";
+            ;;
+        brew)
+            echo "command purge NOT support for package manager $package_manager";
+            ;;
+        opkg)
+            echo "command purge NOT support for package manager $package_manager";
+            ;;
+        *)
+            echo "command purge NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_update() {
+    # update metadata of package or package manager itself(e.g. brew)
+    case "$package_manager" in
+        dnf)
+            dnf makecache;
+            ;;
+        yum)
+            yum makecache;
+            ;;
+        apt)
+            apt update;
+            ;;
+        brew)
+            brew update;
+            ;;
+        opkg)
+            opkg update;
+            ;;
+        *)
+            echo "command update NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+# TODO support upgrade multiple packages at once
+function package_upgrade() {
+    # upgrade package xxx
+    case "$package_manager" in
+        dnf)
+            sudo dnf upgrade -y "$2";
+            ;;
+        yum)
+            sudo yum upgrade -y "$2";
+            ;;
+        apt)
+            sudo apt upgrade "$2";
+            ;;
+        brew)
+            brew upgrade "$2";
+            ;;
+        opkg)
+            opkg upgrade "$2";
+            ;;
+        *)
+            echo "command upgrade NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_cleanup() {
+    # auto remove unneeded packages
+    case "$package_manager" in
+        dnf)
+            sudo dnf autoremove;
+            ;;
+        yum)
+            sudo yum autoremove;
+            ;;
+        apt)
+            sudo apt autoremove;
+            ;;
+        brew)
+            brew cleanup;
+            ;;
+        opkg)
+            echo "command cleanup NOT support for package manager $package_manager";
+            ;;
+        *)
+            echo "command cleanup NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_list() {
+    # list all available packages
+    case "$package_manager" in
+        dnf)
+            dnf list;
+            ;;
+        yum)
+            yum list;
+            ;;
+        apt)
+            apt list;
+            ;;
+        brew)
+            brew search;
+            ;;
+        opkg)
+            opkg list;
+            ;;
+        *)
+            echo "command list NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_list_installed() {
+    # list all installed packages
+    case "$package_manager" in
+        dnf)
+            dnf list installed;
+            ;;
+        yum)
+            yum list installed;
+            ;;
+        apt)
+            apt list --installed;
+            ;;
+        brew)
+            brew list;
+            ;;
+        opkg)
+            opkg list-installed;
+            ;;
+        *)
+            echo "command list NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_search() {
+    # search package xxx
+    case "$package_manager" in
+        dnf)
+            dnf search "$2";
+            ;;
+        yum)
+            yum search "$2";
+            ;;
+        apt)
+            apt search "$2";
+            ;;
+        brew)
+            brew search "$2";
+            ;;
+        opkg)
+            opkg find "*${2}*";
+            ;;
+        *)
+            echo "command search NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_info() {
+    # show info of package xxx
+    case "$package_manager" in
+        dnf)
+            dnf show "$2";
+            ;;
+        yum)
+            yum info "$2";
+            ;;
+        apt)
+            apt show "$2";
+            ;;
+        brew)
+            brew info "$2";
+            ;;
+        opkg)
+            opkg info "$2";
+            ;;
+        *)
+            echo "command info NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+# TODO require install package first ??
+function package_files() {
+    # show files of package xxx
+    case "$package_manager" in
+        dnf|yum)
+            ensure_yum_utils;
+            repoquery --list "$2";
+            ;;
+        apt)
+            ensure_apt_file;
+            echo "Might take a long time..."
+            apt-file list "$2"; # support NOT installed packages, very slow
+            # dpkg -L xxx # only support installed packages, very fast
+            ;;
+        brew)
+            brew ls --verbose "$2";
+            ;;
+        opkg)
+            opkg files "$2";
+            ;;
+        *)
+            echo "command files NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_provides() {
+    # find package providing the file
+    case "$package_manager" in
+        dnf)
+            dnf provides "$2";
+            ;;
+        yum)
+            yum provides "$2";
+            ;;
+        apt)
+            ensure_apt_file;
+            echo "Might take a long time..."
+            apt-file search "$2";
+            ;;
+        brew)
+            echo "command provides NOT support for package manager $package_manager";
+            ;;
+        opkg)
+            opkg search "*$2*";
+            ;;
+        *)
+            echo "command provides NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_depends() {
+    # show dependencies of package xxx
+    case "$package_manager" in
+        dnf|yum)
+            ensure_yum_utils;
+            repoquery --requires --resolve "$2";
+            ;;
+        apt)
+            apt depends "$2";
+            ;;
+        brew)
+            brew deps "$2";
+            ;;
+        opkg)
+            opkg depends "$2";
+            ;;
+        *)
+            echo "command depends NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_rdepends() {
+    # show packages depend on package xxx(reverse depends)
+    case "$package_manager" in
+        dnf|yum)
+            ensure_yum_utils;
+            repoquery --query --whatrequires "$2";
+            ;;
+        apt)
+            apt rdepends "$2";
+            ;;
+        brew)
+            brew uses "$2";
+            ;;
+        opkg)
+            sudo opkg depends "$2";
+            ;;
+        *)
+            echo "command depends NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
+function package_help() {
+    echo "Usage: package <command>";
+    echo "";
+    echo "commands: ";
+    echo "  install <package>      install package";
+    echo "  add <package>          alias of command install";
+    echo "  uninstall <package>    uninstall package";
+    echo "  remove <package>       alias of command uninstall";
+    echo "  delete <package>       alias of command uninstall";
+    echo "  purge <package>        uninstall package with its config files";
+    echo "  update                 update metadata of packages or package manager itself(e.g. brew)";
+    echo "  upgrade <package>      upgrade package";
+    echo "  cleanup                auto remove unneeded packages";
+    echo "  autoremove             alias of command cleanup";
+    echo "  list                   list all available packages";
+    echo "  list-installed         list installed packages";
+    echo "  search <pattern>       search package";
+    echo "  find <pattern>         alias of command search";
+    echo "  show <package>         show info of package";
+    echo "  info <package>         alias of command command show";
+    echo "  files <package>        show files of package";
+    echo "  provides <file>        find package providing the file";
+    echo "  depends <package>      show dependencies of package";
+    echo "  rdepends <package>     show packages depend on package(reverse dependencies)";
+    echo "  help                   show this help doc";
+}
+
+case "$1" in
+    install|add)
+        package_install "$2";
+        ;;
+    uninstall|remove|delete)
+        package_uninstall "$2";
+        ;;
+    purge)
+        package_purge "$2";
+        ;;
+    update)
+        package_update;
+        ;;
+    upgrade|dist-upgrade)
+        package_upgrade "$2";
+        ;;
+    cleanup|autoremove)
+        package_cleanup;
+        ;;
+    list)
+        package_list;
+        ;;
+    list-installed)
+        package_list_installed;
+        ;;
+    search|find)
+        package_search "$2";
+        ;;
+    info|show)
+        package_info "$2";
+        ;;
+    files)
+        package_files "$2";
+        ;;
+    provides)
+        package_provides "$2";
+        ;;
+    depends)
+        package_depends "$2";
+        ;;
+    rdepends)
+        package_rdepends "$2";
+        ;;
+    help)
+        package_help;
+        ;;
+    *)
+        package_help;
+        ;;
+esac

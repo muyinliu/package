@@ -33,27 +33,28 @@ function ensure_apt_file() {
     fi;
 }
 
-# TODO support install multiple packages at once
 function package_install() {
     # install package xxx
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf)
-            sudo dnf install -y "$1";
+            sudo dnf install -y $packages;
             ;;
         yum)
-            sudo yum install -y "$1";
+            sudo yum install -y $packages;
             ;;
         apt)
-            sudo apt install "$1";
+            sudo apt install $packages;
             ;;
         brew)
-            brew install "$1";
+            brew install $packages;
             ;;
         opkg)
-            opkg install "$1";
+            opkg install $packages;
             ;;
         apk)
-            apk add --update "$1";
+            apk add --update $packages;
             ;;
         *)
             echo "command install NOT support for package manager $package_manager";
@@ -61,27 +62,28 @@ function package_install() {
     esac
 }
 
-# TODO support uninstall multiple packages at once
 function package_uninstall() {
-    # remove package xxx
+    # remove package xxx yyy ...
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf)
-            sudo dnf remove -y "$1";
+            sudo dnf remove -y $packages;
             ;;
         yum)
-            sudo yum remove -y "$1";
+            sudo yum remove -y $packages;
             ;;
         apt)
-            sudo apt remove "$1";
+            sudo apt remove $packages;
             ;;
         brew)
-            brew uninstall "$1";
+            brew uninstall $packages;
             ;;
         opkg)
-            opkg remove "$1";
+            opkg remove $packages;
             ;;
         apk)
-            apk del "$1";
+            apk del $packages;
             ;;
         *)
             echo "command uninstall NOT support for package manager $package_manager";
@@ -89,27 +91,28 @@ function package_uninstall() {
     esac
 }
 
-# TODO support reinstall multiple packages at once
 function package_reinstall() {
-    # remove package xxx
+    # remove package xxx yyy ...
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf)
-            sudo dnf reinstall -y "$1";
+            sudo dnf reinstall -y $packages;
             ;;
         yum)
-            sudo yum reinstall -y "$1";
+            sudo yum reinstall -y $packages;
             ;;
         apt)
-            sudo apt install --reinstall -y "$1";
+            sudo apt install --reinstall -y $packages;
             ;;
         brew)
-            brew reinstall "$1";
+            brew reinstall $packages;
             ;;
         opkg)
-            opkg install --force-reinstall "$1";
+            opkg install --force-reinstall $packages;
             ;;
         apk)
-            apk add --update --force-overwrite "$1";
+            apk add --update --force-overwrite $packages;
             ;;
         *)
             echo "command reinstall NOT support for package manager $package_manager";
@@ -119,10 +122,12 @@ function package_reinstall() {
 
 function package_purge() {
     # remove package xxx with config files
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf|yum) # TODO should check
             shift;
-	        for package in "$@"
+	        for package in $packages
             do
                 if rpm -q "$package" > /dev/null ; then
                     echo "removing config files for $package"
@@ -138,7 +143,7 @@ function package_purge() {
 	        done
             ;;
         apt)
-            apt purge "$1";
+            apt purge $packages;
             ;;
         *)
             echo "command purge NOT support for package manager $package_manager";
@@ -173,27 +178,28 @@ function package_update() {
     esac
 }
 
-# TODO support upgrade multiple packages at once
 function package_upgrade() {
-    # upgrade package xxx
+    # upgrade packages xxx yyy ...
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf)
-            sudo dnf upgrade -y "$1";
+            sudo dnf upgrade -y $packages;
             ;;
         yum)
-            sudo yum upgrade -y "$1";
+            sudo yum upgrade -y $packages;
             ;;
         apt)
-            sudo apt upgrade "$1";
+            sudo apt upgrade $packages;
             ;;
         brew)
-            brew upgrade "$1";
+            brew upgrade $packages;
             ;;
         opkg)
-            opkg upgrade "$1";
+            opkg upgrade $packages;
             ;;
         apk)
-            apk add --update --upgrade "$1";
+            apk add --update --upgrade $packages;
             ;;
         *)
             echo "command upgrade NOT support for package manager $package_manager";
@@ -308,24 +314,29 @@ function package_search() {
 
 function package_info() {
     # show info of package xxx
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf)
-            dnf info "$1";
+            dnf info $packages;
             ;;
         yum)
-            yum info "$1";
+            yum info $packages;
             ;;
         apt)
-            apt show "$1";
+            apt show $packages;
             ;;
         brew)
-            brew info "$1";
+            brew info $packages;
             ;;
         opkg)
-            opkg info "$1";
+            for package in $packages
+            do
+                opkg info $package;
+	        done
             ;;
         apk)
-            apk info "$1";
+            apk info $packages;
             ;;
         *)
             echo "command info NOT support for package manager $package_manager";
@@ -336,22 +347,27 @@ function package_info() {
 # TODO require install package first ??
 function package_files() {
     # show files of package xxx
+    local packages
+    packages=$(echo "$@" | cut -d ' ' -f2-)
     case "$package_manager" in
         dnf|yum)
             ensure_yum_utils;
-            repoquery --list "$1";
+            repoquery --list $packages;
             ;;
         apt)
             ensure_apt_file;
             echo "Might take a long time..."
-            apt-file list "$1"; # support NOT installed packages, very slow
+            apt-file list $packages; # support NOT installed packages, very slow
             # dpkg -L xxx # only support installed packages, very fast
             ;;
         brew)
-            brew ls --verbose "$1";
+            brew ls --verbose $packages;
             ;;
         opkg)
-            opkg files "$1";
+            for package in $packages
+            do
+                opkg files $package;
+	        done
             ;;
         apk)
             # TODO require install package first
@@ -440,46 +456,48 @@ function package_help() {
     echo "Usage: package <command>";
     echo "";
     echo "commands: ";
-    echo "  install <package>      install package";
-    echo "  add <package>          alias of command install";
-    echo "  uninstall <package>    uninstall package";
-    echo "  remove <package>       alias of command uninstall";
-    echo "  delete <package>       alias of command uninstall";
-    echo "  purge <package>        uninstall package with its config files";
-    echo "  update                 update metadata of packages or package manager itself(e.g. brew)";
-    echo "  upgrade <package>      upgrade package";
-    echo "  cleanup                auto remove unneeded packages";
-    echo "  autoremove             alias of command cleanup";
-    echo "  list                   list all available packages";
-    echo "  list-installed         list installed packages";
-    echo "  search <pattern>       search package";
-    echo "  find <pattern>         alias of command search";
-    echo "  show <package>         show info of package";
-    echo "  info <package>         alias of command command show";
-    echo "  files <package>        show files of package";
-    echo "  provides <file>        find package providing the file";
-    echo "  depends <package>      show dependencies of package";
-    echo "  rdepends <package>     show packages depend on package(reverse dependencies)";
-    echo "  help                   show this help doc";
+    echo "  install <package> [<package>]     install package";
+    echo "  add <package> [<package>]         alias of command install";
+    echo "  uninstall <package> [<package>]   uninstall package";
+    echo "  remove <package> [<package>]      alias of command uninstall";
+    echo "  delete <package> [<package>]      alias of command uninstall";
+    echo "  purge <package> [<package>]       uninstall package with its config files";
+    echo "  update                            update metadata of packages";
+    echo "                                      or package manager itself(e.g. brew)";
+    echo "  upgrade <package> [<package>]     upgrade package";
+    echo "  cleanup                           auto remove unneeded packages";
+    echo "  autoremove                        alias of command cleanup";
+    echo "  list                              list all available packages";
+    echo "  list-installed                    list installed packages";
+    echo "  search <pattern>                  search package";
+    echo "  find <pattern>                    alias of command search";
+    echo "  show <package> [<package>]        show info of package";
+    echo "  info <package> [<package>]        alias of command command show";
+    echo "  files <package> [<package>]       show files of package";
+    echo "  provides <file>                   find package providing the file";
+    echo "  depends <package>                 show dependencies of package";
+    echo "  rdepends <package>                show packages depend on package";
+    echo "                                      (reverse dependencies)";
+    echo "  help                              show this help doc";
     echo "";
     echo "IMPORTANT NOTE: Only support following backend package managers: dnf, yum, apt, brew(for macOS), opkg(Entware) and apk(for Alpine Linux)";
 }
 
 case "$1" in
     install|add)
-        package_install "$2";
+        package_install "$*";
         ;;
     uninstall|remove|delete)
-        package_uninstall "$2";
+        package_uninstall "$*";
         ;;
     purge)
-        package_purge "$2";
+        package_purge "$*";
         ;;
     update)
         package_update;
         ;;
     upgrade|dist-upgrade)
-        package_upgrade "$2";
+        package_upgrade "$*";
         ;;
     cleanup|autoremove)
         package_cleanup;
@@ -494,10 +512,10 @@ case "$1" in
         package_search "$2";
         ;;
     info|show)
-        package_info "$2";
+        package_info "$*";
         ;;
     files)
-        package_files "$2";
+        package_files "$*";
         ;;
     provides)
         package_provides "$2";

@@ -10,8 +10,10 @@ elif [ "$(command -v apt)" ]; then
     package_manager="apt"
 elif [ "$(command -v opkg)" ]; then
     package_manager="opkg"
+elif [ "$(command -v apk)" ]; then
+    package_manager="apk"
 else
-    echo "Only support following package managers: dnf, yum, apt, brew and opkg(Entware)";
+    echo "Only support following package managers: dnf, yum, apt, brew, opkg(Entware) and apk(for Alpine Linux)";
     exit 1;
 fi;
 
@@ -50,6 +52,9 @@ function package_install() {
         opkg)
             opkg install "$2";
             ;;
+        apk)
+            apk add --update "$2";
+            ;;
         *)
             echo "command install NOT support for package manager $package_manager";
             ;;
@@ -75,6 +80,9 @@ function package_uninstall() {
         opkg)
             opkg remove "$2";
             ;;
+        apk)
+            apk del "$2";
+            ;;
         *)
             echo "command uninstall NOT support for package manager $package_manager";
             ;;
@@ -99,6 +107,9 @@ function package_reinstall() {
             ;;
         opkg)
             opkg install --force-reinstall "$2";
+            ;;
+        apk)
+            apk add --update --force-overwrite "$2";
             ;;
         *)
             echo "command uninstall NOT support for package manager $package_manager";
@@ -135,6 +146,9 @@ function package_purge() {
         opkg)
             echo "command purge NOT support for package manager $package_manager";
             ;;
+        apk)
+            echo "command purge NOT support for package manager $package_manager";
+            ;;
         *)
             echo "command purge NOT support for package manager $package_manager";
             ;;
@@ -158,6 +172,9 @@ function package_update() {
             ;;
         opkg)
             opkg update;
+            ;;
+        apk)
+            apk update;
             ;;
         *)
             echo "command update NOT support for package manager $package_manager";
@@ -184,6 +201,9 @@ function package_upgrade() {
         opkg)
             opkg upgrade "$2";
             ;;
+        apk)
+            apk add --update --upgrade "$2";
+            ;;
         *)
             echo "command upgrade NOT support for package manager $package_manager";
             ;;
@@ -207,6 +227,9 @@ function package_cleanup() {
             ;;
         opkg)
             echo "command cleanup NOT support for package manager $package_manager";
+            ;;
+        apk)
+            apk cache clean;
             ;;
         *)
             echo "command cleanup NOT support for package manager $package_manager";
@@ -232,6 +255,9 @@ function package_list() {
         opkg)
             opkg list;
             ;;
+        apk)
+            apk search;
+            ;;
         *)
             echo "command list NOT support for package manager $package_manager";
             ;;
@@ -255,6 +281,9 @@ function package_list_installed() {
             ;;
         opkg)
             opkg list-installed;
+            ;;
+        apk)
+            apk list;
             ;;
         *)
             echo "command list NOT support for package manager $package_manager";
@@ -280,6 +309,9 @@ function package_search() {
         opkg)
             opkg find "*${2}*";
             ;;
+        apk)
+            apk search "$2";
+            ;;
         *)
             echo "command search NOT support for package manager $package_manager";
             ;;
@@ -303,6 +335,9 @@ function package_info() {
             ;;
         opkg)
             opkg info "$2";
+            ;;
+        apk)
+            apk info "$2";
             ;;
         *)
             echo "command info NOT support for package manager $package_manager";
@@ -330,6 +365,10 @@ function package_files() {
         opkg)
             opkg files "$2";
             ;;
+        apk)
+            # TODO require install package first
+            apk info -L "$2";
+            ;;
         *)
             echo "command files NOT support for package manager $package_manager";
             ;;
@@ -356,6 +395,9 @@ function package_provides() {
         opkg)
             opkg search "*$2*";
             ;;
+        apk)
+            echo "command provides NOT support for package manager $package_manager";
+            ;;
         *)
             echo "command provides NOT support for package manager $package_manager";
             ;;
@@ -378,6 +420,9 @@ function package_depends() {
         opkg)
             opkg depends "$2";
             ;;
+        apk)
+            apk info --depends "$2";
+            ;;
         *)
             echo "command depends NOT support for package manager $package_manager";
             ;;
@@ -399,6 +444,9 @@ function package_rdepends() {
             ;;
         opkg)
             opkg whatdepends "$2";
+            ;;
+        apk)
+            apk info --rdepends "$2";
             ;;
         *)
             echo "command depends NOT support for package manager $package_manager";

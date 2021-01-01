@@ -2,6 +2,15 @@
 
 Are you tired of using different commands of package managers on different OS(e.g. `yum` for CentOS/RedHat/Fedora, `apt` for Ubuntu/Debian, `brew`/`port` for macOS)? If so, `package` will save you by providing unify commands(e.g. `install` `uninstall`) in most cases.
 
+## Supported backend package managers
+
+- `dnf` for CentOS/RedHat/Fedora
+- `yum` for CentOS/RedHat/Fedora
+- `apt` for Ubuntu/Debian
+- `brew` for macOS
+- `opkg` [Entware](https://github.com/Entware/Entware), for Synology DSM or other embedded devices
+- `apk` for Alpine Linux
+
 ## Installation
 
 ```shell

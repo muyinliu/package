@@ -112,7 +112,7 @@ function package_reinstall() {
             apk add --update --force-overwrite "$2";
             ;;
         *)
-            echo "command uninstall NOT support for package manager $package_manager";
+            echo "command reinstall NOT support for package manager $package_manager";
             ;;
     esac
 }

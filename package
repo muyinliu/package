@@ -356,9 +356,16 @@ function package_files() {
             ;;
         apt)
             ensure_apt_file;
-            echo "Might take a long time..."
-            apt-file list $packages; # support NOT installed packages, very slow
-            # dpkg -L xxx # only support installed packages, very fast
+            for package in $packages
+            do
+                if [ "$(apt -qq list $package | grep installed)" ]; then
+                    dpkg -L $package;
+                else
+                    echo "Might take a long time..."
+                    # support NOT installed packages, very slow
+                    apt-file list $package;
+                fi
+            done
             ;;
         brew)
             brew ls --verbose $packages;

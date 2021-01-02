@@ -277,7 +277,7 @@ function package_list_installed() {
             opkg list-installed;
             ;;
         apk)
-            apk list;
+            apk list --installed;
             ;;
         *)
             echo "command list NOT support for package manager $package_manager";

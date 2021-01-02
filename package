@@ -285,6 +285,33 @@ function package_list_installed() {
     esac
 }
 
+function package_list_upgradable() {
+    # list all upgradable packages
+    case "$package_manager" in
+        dnf)
+            dnf list updates;
+            ;;
+        yum)
+            yum list updates;
+            ;;
+        apt)
+            apt list --upgradable;
+            ;;
+        brew)
+            brew outdated;
+            ;;
+        opkg)
+            opkg list-upgradable;
+            ;;
+        apk)
+            apk list --upgradable;
+            ;;
+        *)
+            echo "command list NOT support for package manager $package_manager";
+            ;;
+    esac
+}
+
 function package_search() {
     # search package xxx
     case "$package_manager" in
@@ -481,6 +508,7 @@ function package_help() {
     echo "  autoremove                        alias of command cleanup";
     echo "  list                              list all available packages";
     echo "  list-installed                    list installed packages";
+    echo "  list-upgradable                   list upgradable packages";
     echo "  search <pattern>                  search package";
     echo "  find <pattern>                    alias of command search";
     echo "  show <package> [<package>]        show info of package";
@@ -520,6 +548,9 @@ case "$1" in
         ;;
     list-installed)
         package_list_installed;
+        ;;
+    list-upgradable)
+        package_list_upgradable;
         ;;
     search|find)
         package_search "$2";

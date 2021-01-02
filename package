@@ -371,6 +371,7 @@ function package_files() {
             brew ls --verbose $packages;
             ;;
         opkg)
+            # TODO require install package first
             for package in $packages
             do
                 opkg files $package;

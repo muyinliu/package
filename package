@@ -509,6 +509,8 @@ function package_help() {
     echo "  list                              list all available packages";
     echo "  list-installed                    list installed packages";
     echo "  list-upgradable                   list upgradable packages";
+    echo "  list-update                       alias of command list-upgradable";
+    echo "  list-updates                      alias of command list-upgradable";
     echo "  search <pattern>                  search package";
     echo "  find <pattern>                    alias of command search";
     echo "  show <package> [<package>]        show info of package";
@@ -549,7 +551,7 @@ case "$1" in
     list-installed)
         package_list_installed;
         ;;
-    list-upgradable)
+    list-upgradable|list-updates|list-update)
         package_list_upgradable;
         ;;
     search|find)

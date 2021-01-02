@@ -250,7 +250,7 @@ function package_list() {
             opkg list;
             ;;
         apk)
-            apk search;
+            apk list --available;
             ;;
         *)
             echo "command list NOT support for package manager $package_manager";

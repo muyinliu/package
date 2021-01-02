@@ -235,10 +235,10 @@ function package_list() {
     # list all available packages
     case "$package_manager" in
         dnf)
-            dnf list;
+            dnf list available;
             ;;
         yum)
-            yum list;
+            yum list available;
             ;;
         apt)
             apt list;

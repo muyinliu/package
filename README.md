@@ -28,27 +28,33 @@ package help
 Usage: package <command>
 
 commands:
-  install <package>      install package
-  add <package>          alias of command install
-  uninstall <package>    uninstall package
-  remove <package>       alias of command uninstall
-  delete <package>       alias of command uninstall
-  purge <package>        uninstall package with its config files
-  update                 update metadata of packages or package manager itself(e.g. brew)
-  upgrade <package>      upgrade package
-  cleanup                auto remove unneeded packages
-  autoremove             alias of command cleanup
-  list                   list all available packages
-  list-installed         list installed packages
-  search <pattern>       search package
-  find <pattern>         alias of command search
-  show <package>         show info of package
-  info <package>         alias of command command show
-  files <package>        show files of package
-  provides <file>        find package providing the file
-  depends <package>      show dependencies of package
-  rdepends <package>     show packages depend on package(reverse dependencies)
-  help                   show this help doc
+  install <package> [<package>]     install package
+  add <package> [<package>]         alias of command install
+  uninstall <package> [<package>]   uninstall package
+  remove <package> [<package>]      alias of command uninstall
+  delete <package> [<package>]      alias of command uninstall
+  purge <package> [<package>]       uninstall package with its config files
+  update                            update metadata of packages
+                                      or package manager itself(e.g. brew)
+  upgrade <package> [<package>]     upgrade package
+  cleanup                           auto remove unneeded packages
+  autoremove                        alias of command cleanup
+  list                              list all available packages
+  list-installed                    list installed packages
+  list-upgradable                   list upgradable packages
+  list-update                       alias of command list-upgradable
+  list-updates                      alias of command list-upgradable
+  search <pattern>                  search package
+  find <pattern>                    alias of command search
+  show <package> [<package>]        show info of package
+  info <package> [<package>]        alias of command command show
+  files <package> [<package>]       show files of package
+  provides <file>                   find package providing the file
+  depends <package>                 show dependencies of package
+  rdepends <package>                show packages depend on package
+                                      (reverse dependencies)
+  backend                           show backend package manager
+  help                              show this help doc
 ```
 
 ## License

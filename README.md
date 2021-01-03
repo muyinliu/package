@@ -55,6 +55,8 @@ commands:
                                       (reverse dependencies)
   backend                           show backend package manager
   help                              show this help doc
+
+IMPORTANT NOTE: Only support following backend package managers: dnf, yum, apt, brew(for macOS), opkg(Entware for embedded devices) and apk(for Alpine Linux)
 ```
 
 ## License

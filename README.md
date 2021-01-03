@@ -13,6 +13,20 @@ Are you tired of using different commands of package managers on different OS(e.
 
 ## Installation
 
+### Alpine Linux
+
+```shell
+wget -O /usr/local/bin/package https://raw.githubusercontent.com/muyinliu/package/master/package
+sed -i "s/bash/sh/g" /usr/local/bin/package
+chmod +x /usr/local/bin/package
+```
+
+Note: default shell of [Alpine Linux](https://alpinelinux.org/) is `ash`(Almquist shell) in [busybox](https://www.busybox.net/), NOT `bash`, so have to replace `bash` with `sh`
+
+Note: by default [Alpine Linux](https://alpinelinux.org/) contains download tool `wget`, NOT `curl`
+
+### Other Linux & macOS
+
 ```shell
 curl -o /usr/local/bin/package https://raw.githubusercontent.com/muyinliu/package/master/package
 chmod +x /usr/local/bin/package
